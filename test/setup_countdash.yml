@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: run hclfile
+      command: nomad job run /vagrant/test/countdash.hcl

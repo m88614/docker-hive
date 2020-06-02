@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "fredrikhgrelland/hashistack"
+  config.vm.box = "local/hashistack"
   config.vm.network "private_network", ip: "10.0.3.10"
 
   # Hashicorp consul ui
@@ -10,10 +10,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.linked_clone = true
-    vb.memory = 2048
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.memory = 8000
+    vb.cpus = 8
   end
   config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "./test/setup_hive.yml"
+      ansible.playbook = "./test/setup_jobs.yml"
   end
 
 end
