@@ -12,5 +12,8 @@ Vagrant.configure("2") do |config|
     vb.linked_clone = true
     vb.memory = 2048
   end
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "setup_hive.yml"
+  end
 
 end
