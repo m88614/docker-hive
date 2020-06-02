@@ -4,9 +4,9 @@
   tasks:
     - name: copy hcl file
       copy:
-        src: "./test/hive-connect.hcl"
-        dest: "/tmp/hive-connect.hcl"
+        src: hive-connect.hcl
+        dest: /tmp/hive-connect.hcl
     - name: cat hcl file
-        command: cat "/tmp/hive-connect.hcl"
-        register: fileoutput
+      command: cat /tmp/hive-connect.hcl
+      register: fileoutput
     - debug: msg="{{ fileoutput.stdout }}"
