@@ -2,6 +2,22 @@
 - hosts: all
   become: yes
   tasks:
+    - name: restart consul
+      systemd:
+        name: consul
+        state: restarted
+    - name: restart nomad
+      systemd:
+        name: nomad
+        state: restarted
+    - name: "wait for consul to come up"
+      uri:
+        url: "http://localhost:8500/v1/catalog/nodes"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 60
+      delay: 1
     - name: "wait for nomad to come up"
       uri:
         url: "http://127.0.0.1:4646/v1/jobs"
@@ -10,6 +26,9 @@
       until: result.status == 200
       retries: 60
       delay: 1
+#    - name: start countdash nomad job
+#      command: nomad job run /vagrant/test/countdash.hcl
+#      register: fileoutput
     - name: start minio nomad job
       command: nomad job run /vagrant/test/minio-connect.hcl
       register: fileoutput

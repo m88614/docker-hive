@@ -2,5 +2,15 @@
 - hosts: all
   become: yes
   tasks:
+    - pause:
+        minutes: 1
+    - name: "wait for nomad to come up"
+      uri:
+        url: "http://127.0.0.1:4646/v1/jobs"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 60
+      delay: 1
     - name: run hclfile
       command: nomad job run /vagrant/test/countdash.hcl

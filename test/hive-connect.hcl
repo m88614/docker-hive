@@ -106,7 +106,7 @@ job "hive" {
 
       resources {
         cpu    = 200
-        memory = 512
+        memory = 2048
       }
 
       logs {
@@ -256,7 +256,7 @@ job "hive" {
 
       resources {
         cpu    = 500
-        memory = 512
+        memory = 2048
       }
 
       logs {
@@ -360,7 +360,7 @@ job "hive" {
 
       resources {
         cpu    = 200
-        memory = 256
+        memory = 512
       }
 
       logs {
