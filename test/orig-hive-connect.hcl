@@ -33,17 +33,17 @@ job "hive" {
         type     = "http"
         port     = "healthcheck"
         path     = "/jmx"
-        interval = "30s"
+        interval = "10s"
         timeout  = "2s"
       }
-
+      
       check {
         name     = "beeline"
         type     = "script"
         task     = "hiveserver"
         command  = "/bin/bash"
         args     = ["-c", "beeline -u jdbc:hive2:// -e \"SHOW DATABASES;\" &> /tmp/script_connect_beeline_hive-server.txt &&  echo \"return code $?\""]
-        interval = "30s"
+        interval = "20s"
         timeout  = "120s"
       }
 
@@ -105,8 +105,8 @@ job "hive" {
       }
 
       resources {
-        cpu    = 500
-        memory = 1024
+        cpu    = 200
+        memory = 2048
       }
 
       logs {
@@ -174,7 +174,7 @@ job "hive" {
         task     = "metastoreserver"
         command  = "/bin/bash"
         args     = ["-c", "beeline -u jdbc:hive2:// -e \"SHOW DATABASES;\" &> /tmp/check_script_beeline_metastoreserver && echo \"return code $?\""]
-        interval = "30s"
+        interval = "20s"
         timeout  = "120s"
       }
 
@@ -209,6 +209,7 @@ job "hive" {
         args = [ "-it", "${NOMAD_UPSTREAM_ADDR_hive-database}", "-t", 120 ]
       }
     }
+
     task "waitfor-minio" {
       lifecycle {
         hook    = "prestart"
@@ -255,7 +256,7 @@ job "hive" {
 
       resources {
         cpu    = 500
-        memory = 1024
+        memory = 2048
       }
 
       logs {
@@ -275,6 +276,7 @@ job "hive" {
           HIVE_SITE_CONF_hive_driver_parallel_compilation=true
           HIVE_SITE_CONF_hive_metastore_warehouse_dir="s3a://hive/warehouse"
           HIVE_SITE_CONF_hive_metastore_event_db_notification_api_auth=false
+
           CORE_CONF_fs_defaultFS = "s3a://default"
           CORE_CONF_fs_s3a_connection_ssl_enabled = false
           CORE_CONF_fs_s3a_endpoint = "http://{{ env "NOMAD_UPSTREAM_ADDR_minio" }}"
@@ -305,7 +307,7 @@ job "hive" {
     update {
       max_parallel      = 1
       health_check      = "checks"
-      min_healthy_time  = "30s"
+      min_healthy_time  = "10s"
       healthy_deadline  = "5m"
       progress_deadline = "10m"
       auto_revert       = true
@@ -323,7 +325,7 @@ job "hive" {
         task     = "postgresql"
         command  = "/usr/local/bin/pg_isready"
         args     = ["-U", "hive"]
-        interval = "30s"
+        interval = "5s"
         timeout  = "2s"
       }
 
@@ -336,11 +338,11 @@ job "hive" {
       mode = "bridge"
     }
 
-    //    ephemeral_disk {
-    //      migrate = true
-    //      size    = 100
-    //      sticky  = true
-    //    }
+//    ephemeral_disk {
+//      migrate = true
+//      size    = 100
+//      sticky  = true
+//    }
 
     task "postgresql" {
       driver = "docker"
@@ -358,7 +360,7 @@ job "hive" {
 
       resources {
         cpu    = 200
-        memory = 256
+        memory = 512
       }
 
       logs {
