@@ -2,17 +2,17 @@
 - hosts: all
   become: yes
   tasks:
-    - name: restart consul
-      systemd:
-        name: consul
-        state: restarted
-    - name: restart nomad
-      systemd:
-        name: nomad
-        state: restarted
+#    - name: restart consul
+#      systemd:
+#        name: consul
+#        state: restarted
+#    - name: restart nomad
+#      systemd:
+#        name: nomad
+#        state: restarted
     - name: "wait for consul to come up"
       uri:
-        url: "http://localhost:8500/v1/catalog/nodes"
+        url: "http://localhost:8500/v1/status/leader"
         status_code: 200
       register: result
       until: result.status == 200
@@ -20,7 +20,7 @@
       delay: 1
     - name: "wait for nomad to come up"
       uri:
-        url: "http://127.0.0.1:4646/v1/jobs"
+        url: "http://127.0.0.1:4646/v1/status/leader"
         status_code: 200
       register: result
       until: result.status == 200
@@ -32,6 +32,6 @@
     - name: start minio nomad job
       command: nomad job run /vagrant/test/minio-connect.hcl
       register: fileoutput
-    - name: start hive nomad job
-      command: nomad job run /vagrant/test/hive-connect.hcl
-      register: fileoutput
+#    - name: start hive nomad job
+#      command: nomad job run /vagrant/test/hive-connect.hcl
+#      register: fileoutput
